@@ -68,23 +68,6 @@ int isSafe(int v, int n, int c)
     return 1;
 }
 
-int isValid(int n)
-{
-    int c;
-    for(int v = 1; v < n; v++)
-    {
-        for (int i = 0; i < n; i++)
-        {
-            c = colors[v-1];
-            if (graph[v-1][i] && c == colors[i])
-            {
-                return 0;
-            }
-        }
-    }
-    return 1;
-}
-
 int greedyColoring(int n, int v)
 {
     if(v > n)
@@ -106,26 +89,6 @@ int greedyColoring(int n, int v)
     }
 }
 
-int bruteColoring(int n, int v)
-{
-    if(v > n)
-    {
-        return isValid(n);
-    }
-
-    for(int c = 1; c <= n ; c++)
-    {
-        colors[v-1] = c;
-        if(bruteColoring(n, v+1))
-        {
-            if(minRounds(colors, n) < minRounds(solution,n))
-            {
-                copy(n, colors, solution);
-            }
-        }
-    }
-
-}
 
 int minRounds(int *array, int size)
 {
@@ -158,8 +121,7 @@ int main()
     solution = malloc(sizeof(int)*n);
     initSolution(n);
 
-    //greedyColoring(n, 1);
-    bruteColoring(n, 1);
+    greedyColoring(n, 1);
 
     for(int i = 0; i < n; i++)
     {

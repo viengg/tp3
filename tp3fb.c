@@ -56,18 +56,6 @@ void setEdges(int m)
     }
 }
 
-int isSafe(int v, int n, int c)
-{
-    for (int i = 0; i < n; i++)
-    {
-        if (graph[v-1][i] && c == colors[i])
-        {
-            return 0;
-        }
-    }
-    return 1;
-}
-
 int isValid(int n)
 {
     int c;
@@ -83,27 +71,6 @@ int isValid(int n)
         }
     }
     return 1;
-}
-
-int greedyColoring(int n, int v)
-{
-    if(v > n)
-    {
-        copy(n, colors, solution);
-        return 1;
-    }
-
-    for(int c = 1; ; c++)
-    {
-        if(isSafe(v, n, c))
-        {
-            colors[v-1] = c;
-            if(greedyColoring(n, v+1))
-            {
-                return 1;
-            }
-        }
-    }
 }
 
 int bruteColoring(int n, int v)
@@ -158,7 +125,6 @@ int main()
     solution = malloc(sizeof(int)*n);
     initSolution(n);
 
-    //greedyColoring(n, 1);
     bruteColoring(n, 1);
 
     for(int i = 0; i < n; i++)
