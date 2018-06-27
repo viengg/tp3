@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int **graph, *colors, *solution;
+int **graph, *colors;
 
 void initGraph(int size)
 {
@@ -26,22 +26,6 @@ void initColors(int n)
     for(int i = 0; i < n; i++)
     {
         colors[i] = 0;
-    }
-}
-
-void initSolution(int n)
-{
-    for(int i = 0; i < n; i++)
-    {
-        solution[i] = n+1;
-    }
-}
-
-void copy(int n, int *src, int *dest)
-{
-    for(int i = 0; i < n; i++)
-    {
-        dest[i] = src[i];
     }
 }
 
@@ -71,7 +55,7 @@ int isSafe(int v, int n, int c)
 int isValid(int n)
 {
     int c;
-    for(int v = 1; v < n; v++)
+    for(int v = 1; v <= n; v++)
     {
         for (int i = 0; i < n; i++)
         {
@@ -89,7 +73,6 @@ int greedyColoring(int n, int v)
 {
     if(v > n)
     {
-        copy(n, colors, solution);
         return 1;
     }
 
@@ -106,25 +89,31 @@ int greedyColoring(int n, int v)
     }
 }
 
-int bruteColoring(int n, int v)
+int bruteSolving(int n, int m, int v)
 {
     if(v > n)
     {
         return isValid(n);
     }
 
-    for(int c = 1; c <= n ; c++)
+    for(int c = 1; c <= m ; c++)
     {
         colors[v-1] = c;
-        if(bruteColoring(n, v+1))
+        if(bruteSolving(n, m, v+1))
         {
-            if(minRounds(colors, n) < minRounds(solution,n))
-            {
-                copy(n, colors, solution);
-            }
+            return 1;
         }
     }
+    return 0;
+}
 
+void bruteColoring(int n)
+{
+    int i = 1;
+    while(!bruteSolving(n, i, 1))
+    {
+        i++;
+    }
 }
 
 int minRounds(int *array, int size)
@@ -144,6 +133,9 @@ int minRounds(int *array, int size)
 
 int main()
 {
+    FILE *rodada, *alocacao;
+    rodada = fopen("rodada.txt", "w+");
+    alocacao = fopen("alocacao.txt", "w+");
     int n, m;
 
     scanf("%d", &n);
@@ -155,17 +147,18 @@ int main()
     colors = malloc(sizeof(int)*n);
     initColors(n);
 
-    solution = malloc(sizeof(int)*n);
-    initSolution(n);
-
     //greedyColoring(n, 1);
-    bruteColoring(n, 1);
+    bruteColoring(n);
 
     for(int i = 0; i < n; i++)
     {
-        printf("%d %d\n", i+1, solution[i]);
+        printf("%d %d\n", i+1, colors[i]);
+        fprintf(alocacao,"%d %d\n", i+1, colors[i]);
     }
-    printf("MIN RODADAS: %d", minRounds(solution, n));
+    printf("%d\n", minRounds(colors, n));
+    fprintf(rodada,"%d\n", minRounds(colors, n));
 
+    fclose(rodada);
+    fclose(alocacao);
     return 0;
 }

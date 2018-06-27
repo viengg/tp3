@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int **graph, *colors, *solution;
+int **graph, *colors;
 
 void initGraph(int size)
 {
@@ -26,22 +26,6 @@ void initColors(int n)
     for(int i = 0; i < n; i++)
     {
         colors[i] = 0;
-    }
-}
-
-void initSolution(int n)
-{
-    for(int i = 0; i < n; i++)
-    {
-        solution[i] = n+1;
-    }
-}
-
-void copy(int n, int *src, int *dest)
-{
-    for(int i = 0; i < n; i++)
-    {
-        dest[i] = src[i];
     }
 }
 
@@ -72,7 +56,6 @@ int greedyColoring(int n, int v)
 {
     if(v > n)
     {
-        copy(n, colors, solution);
         return 1;
     }
 
@@ -107,6 +90,9 @@ int minRounds(int *array, int size)
 
 int main()
 {
+    FILE *rodada, *alocacao;
+    rodada = fopen("rodada.txt", "w+");
+    alocacao = fopen("alocacao.txt", "w+");
     int n, m;
 
     scanf("%d", &n);
@@ -118,16 +104,18 @@ int main()
     colors = malloc(sizeof(int)*n);
     initColors(n);
 
-    solution = malloc(sizeof(int)*n);
-    initSolution(n);
-
     greedyColoring(n, 1);
 
     for(int i = 0; i < n; i++)
     {
-        printf("%d %d\n", i+1, solution[i]);
+        printf("%d %d\n", i+1, colors[i]);
+        fprintf(alocacao,"%d %d\n", i+1, colors[i]);
     }
-    printf("MIN RODADAS: %d", minRounds(solution, n));
+    printf("%d\n", minRounds(colors, n));
+    fprintf(rodada,"%d\n", minRounds(colors, n));
+
+    fclose(rodada);
+    fclose(alocacao);
 
     return 0;
 }
