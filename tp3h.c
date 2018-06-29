@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#define NUMBEROFRUNS 10
 
 int **graph, *colors;
 
@@ -40,9 +42,9 @@ void setEdges(int m)
     }
 }
 
-int isSafe(int v, int n, int c)
+int isSafe(int v, int c)
 {
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i <= v; i++)
     {
         if (graph[v-1][i] && c == colors[i])
         {
@@ -61,7 +63,7 @@ int greedyColoring(int n, int v)
 
     for(int c = 1; ; c++)
     {
-        if(isSafe(v, n, c))
+        if(isSafe(v, c))
         {
             colors[v-1] = c;
             if(greedyColoring(n, v+1))
@@ -84,7 +86,6 @@ int minRounds(int *array, int size)
             max = array[i];
         }
     }
-
     return max;
 }
 
@@ -94,6 +95,7 @@ int main()
     rodada = fopen("rodada.txt", "w+");
     alocacao = fopen("alocacao.txt", "w+");
     int n, m;
+    clock_t t;
 
     scanf("%d", &n);
     scanf("%d", &m);
@@ -104,14 +106,22 @@ int main()
     colors = malloc(sizeof(int)*n);
     initColors(n);
 
-    greedyColoring(n, 1);
+    t = clock();
+
+    for(int i = 0; i < NUMBEROFRUNS; i++)
+    {
+        greedyColoring(n, 1);
+    }
+
+    t = clock() - t;
+    double timeTaken = (double)t/(CLOCKS_PER_SEC*NUMBEROFRUNS);
 
     for(int i = 0; i < n; i++)
     {
         printf("%d %d\n", i+1, colors[i]);
         fprintf(alocacao,"%d %d\n", i+1, colors[i]);
     }
-    printf("%d\n", minRounds(colors, n));
+    printf("%d EM %f segundos\n", minRounds(colors, n), timeTaken);
     fprintf(rodada,"%d\n", minRounds(colors, n));
 
     fclose(rodada);
